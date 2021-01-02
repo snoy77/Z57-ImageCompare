@@ -48,12 +48,17 @@
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.checkedListBox_ImagesClearName = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panel_progressView = new System.Windows.Forms.Panel();
+            this.label_progress = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.checkedListBox_ImagesClearName = new System.Windows.Forms.CheckedListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.checkBoxVisibleHexOfImage = new System.Windows.Forms.CheckBox();
+            this.panel_buttons = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.checkBox_VisualImage = new System.Windows.Forms.CheckBox();
             this.panel_ImagesHEX = new System.Windows.Forms.Panel();
             this.label_HammingLength = new System.Windows.Forms.Label();
@@ -70,21 +75,16 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.panel_buttons = new System.Windows.Forms.Panel();
-            this.checkBoxVisibleHexOfImage = new System.Windows.Forms.CheckBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.panel_progressView = new System.Windows.Forms.Panel();
-            this.label_progress = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel_progressView.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.panel_buttons.SuspendLayout();
             this.panel_ImagesHEX.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.panel_buttons.SuspendLayout();
-            this.panel_progressView.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox_FolderOfImages
@@ -320,6 +320,43 @@
             this.label4.TabIndex = 6;
             this.label4.Text = "Выберите режим:";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 29);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(170, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Путь к папке с изображениями:";
+            // 
+            // panel_progressView
+            // 
+            this.panel_progressView.Controls.Add(this.label_progress);
+            this.panel_progressView.Controls.Add(this.progressBar1);
+            this.panel_progressView.Location = new System.Drawing.Point(9, 116);
+            this.panel_progressView.Name = "panel_progressView";
+            this.panel_progressView.Size = new System.Drawing.Size(318, 134);
+            this.panel_progressView.TabIndex = 24;
+            // 
+            // label_progress
+            // 
+            this.label_progress.AutoSize = true;
+            this.label_progress.Location = new System.Drawing.Point(143, 39);
+            this.label_progress.Name = "label_progress";
+            this.label_progress.Size = new System.Drawing.Size(36, 13);
+            this.label_progress.TabIndex = 23;
+            this.label_progress.Text = "1 / 30";
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(3, 13);
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(312, 23);
+            this.progressBar1.Step = 1;
+            this.progressBar1.TabIndex = 22;
+            this.progressBar1.Value = 2;
+            // 
             // checkedListBox_ImagesClearName
             // 
             this.checkedListBox_ImagesClearName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -329,15 +366,6 @@
             this.checkedListBox_ImagesClearName.Name = "checkedListBox_ImagesClearName";
             this.checkedListBox_ImagesClearName.Size = new System.Drawing.Size(325, 214);
             this.checkedListBox_ImagesClearName.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(170, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Путь к папке с изображениями:";
             // 
             // groupBox2
             // 
@@ -362,14 +390,28 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Информация по сравнению";
             // 
-            // button3
+            // checkBoxVisibleHexOfImage
             // 
-            this.button3.Location = new System.Drawing.Point(415, 113);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(213, 49);
-            this.button3.TabIndex = 19;
-            this.button3.Text = "Оставить и НЕ учитывать далее";
-            this.button3.UseVisualStyleBackColor = true;
+            this.checkBoxVisibleHexOfImage.AutoSize = true;
+            this.checkBoxVisibleHexOfImage.Checked = true;
+            this.checkBoxVisibleHexOfImage.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxVisibleHexOfImage.Location = new System.Drawing.Point(245, 22);
+            this.checkBoxVisibleHexOfImage.Name = "checkBoxVisibleHexOfImage";
+            this.checkBoxVisibleHexOfImage.Size = new System.Drawing.Size(111, 17);
+            this.checkBoxVisibleHexOfImage.TabIndex = 21;
+            this.checkBoxVisibleHexOfImage.Text = "Показывать хеш";
+            this.checkBoxVisibleHexOfImage.UseVisualStyleBackColor = true;
+            this.checkBoxVisibleHexOfImage.CheckedChanged += new System.EventHandler(this.checkBoxVisibleHexOfImage_CheckedChanged);
+            // 
+            // panel_buttons
+            // 
+            this.panel_buttons.Controls.Add(this.button2);
+            this.panel_buttons.Controls.Add(this.button1);
+            this.panel_buttons.Controls.Add(this.button3);
+            this.panel_buttons.Location = new System.Drawing.Point(0, 424);
+            this.panel_buttons.Name = "panel_buttons";
+            this.panel_buttons.Size = new System.Drawing.Size(634, 176);
+            this.panel_buttons.TabIndex = 20;
             // 
             // button2
             // 
@@ -388,6 +430,15 @@
             this.button1.TabIndex = 17;
             this.button1.Text = "Вынести в отдельную папку";
             this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(415, 113);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(213, 49);
+            this.button3.TabIndex = 19;
+            this.button3.Text = "Оставить и НЕ учитывать далее";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // checkBox_VisualImage
             // 
@@ -414,6 +465,7 @@
             this.panel_ImagesHEX.Name = "panel_ImagesHEX";
             this.panel_ImagesHEX.Size = new System.Drawing.Size(634, 36);
             this.panel_ImagesHEX.TabIndex = 6;
+            this.panel_ImagesHEX.Visible = false;
             // 
             // label_HammingLength
             // 
@@ -532,57 +584,6 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "image (*.jpg; *.png)|*.jpg; *png|All (*.*)|*.*";
             // 
-            // panel_buttons
-            // 
-            this.panel_buttons.Controls.Add(this.button2);
-            this.panel_buttons.Controls.Add(this.button1);
-            this.panel_buttons.Controls.Add(this.button3);
-            this.panel_buttons.Location = new System.Drawing.Point(0, 424);
-            this.panel_buttons.Name = "panel_buttons";
-            this.panel_buttons.Size = new System.Drawing.Size(634, 176);
-            this.panel_buttons.TabIndex = 20;
-            // 
-            // checkBoxVisibleHexOfImage
-            // 
-            this.checkBoxVisibleHexOfImage.AutoSize = true;
-            this.checkBoxVisibleHexOfImage.Checked = true;
-            this.checkBoxVisibleHexOfImage.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxVisibleHexOfImage.Location = new System.Drawing.Point(245, 22);
-            this.checkBoxVisibleHexOfImage.Name = "checkBoxVisibleHexOfImage";
-            this.checkBoxVisibleHexOfImage.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxVisibleHexOfImage.TabIndex = 21;
-            this.checkBoxVisibleHexOfImage.Text = "Показывать хеш";
-            this.checkBoxVisibleHexOfImage.UseVisualStyleBackColor = true;
-            this.checkBoxVisibleHexOfImage.CheckedChanged += new System.EventHandler(this.checkBoxVisibleHexOfImage_CheckedChanged);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(3, 13);
-            this.progressBar1.Maximum = 1000;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(312, 23);
-            this.progressBar1.Step = 1;
-            this.progressBar1.TabIndex = 22;
-            this.progressBar1.Value = 2;
-            // 
-            // panel_progressView
-            // 
-            this.panel_progressView.Controls.Add(this.label_progress);
-            this.panel_progressView.Controls.Add(this.progressBar1);
-            this.panel_progressView.Location = new System.Drawing.Point(9, 116);
-            this.panel_progressView.Name = "panel_progressView";
-            this.panel_progressView.Size = new System.Drawing.Size(318, 134);
-            this.panel_progressView.TabIndex = 24;
-            // 
-            // label_progress
-            // 
-            this.label_progress.AutoSize = true;
-            this.label_progress.Location = new System.Drawing.Point(143, 39);
-            this.label_progress.Name = "label_progress";
-            this.label_progress.Size = new System.Drawing.Size(36, 13);
-            this.label_progress.TabIndex = 23;
-            this.label_progress.Text = "1 / 30";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -602,14 +603,14 @@
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.panel_progressView.ResumeLayout(false);
+            this.panel_progressView.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.panel_buttons.ResumeLayout(false);
             this.panel_ImagesHEX.ResumeLayout(false);
             this.panel_ImagesHEX.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.panel_buttons.ResumeLayout(false);
-            this.panel_progressView.ResumeLayout(false);
-            this.panel_progressView.PerformLayout();
             this.ResumeLayout(false);
 
         }
