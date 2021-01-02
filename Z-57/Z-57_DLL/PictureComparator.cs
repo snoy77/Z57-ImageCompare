@@ -34,22 +34,29 @@ namespace Z_57_DLL
         {
             List<float> imageOnePixels = new List<float>();//значения цветов пикселей первой картинки
             List<float> imageTwoPixels = new List<float>();
-            string imageOneTrack = "";
+            string imageOneTrack = "";//биты структуры изображений
             string imageTwoTrack = "";
+
+            //Изменяем размеры картинок
             ChangeSize(ref imageOne, imgMiniSize);
             ChangeSize(ref imageTwo, imgMiniSize);
 
-            GetBlackMode(imageOne, imageOnePixels);
-            GetBlackMode(imageTwo, imageTwoPixels);
+            //Получаем список пикселей, у каждого из которых среднее значение RGB
+            imageOnePixels.AddRange(GetBlackModePixelsList(imageOne));
+            imageTwoPixels.AddRange(GetBlackModePixelsList(imageTwo));
 
-            setTrack(imageOnePixels, ref imageOneTrack);
-            setTrack(imageTwoPixels, ref imageTwoTrack);
+            //Получаем список битов -структуру(след)
+            imageOneTrack = GetTrack(imageOnePixels);
+            imageTwoTrack = GetTrack(imageTwoPixels);
 
+            //Получаем Хеш изображения
             string imageOneHEX = BinaryStringToHexString(imageOneTrack);
             string imageTwoHEX = BinaryStringToHexString(imageTwoTrack);
 
+            //Вычисляем расстояние Хэмминга
             int HammingDistance = returnHammingDistance(imageOneHEX, imageTwoHEX);
 
+            //Возвращаем результат сравнения
             if (HammingDistance == 0)//одинаковые
             {
                 return 0;
@@ -63,12 +70,14 @@ namespace Z_57_DLL
                 return 2;//есть сомнения
             }         
         }
-        public void ChangeSize(ref Bitmap image1, int imgMiniSize)
+     
+        private void ChangeSize(ref Bitmap image1, int imgMiniSize)
         {
             image1 = new Bitmap(image1, new Size(imgMiniSize, imgMiniSize));
         }
-        public void GetBlackMode(Bitmap image, List<float> pixels)
+        private float[] GetBlackModePixelsList(Bitmap image)
         {
+            List<float> result = new List<float>();//Список пикселей со средним RGB
             for (int j = 0; j < image.Height; j++)
                 for (int i = 0; i < image.Width; i++)
                 {
@@ -79,23 +88,26 @@ namespace Z_57_DLL
                     float G = (float)((pixel & 0x0000FF00) >> 8); // зеленый
                     float B = (float)(pixel & 0x000000FF); // синий
                                                            // делаем цвет черно-белым (оттенки серого) - находим среднее арифметическое
-                    pixels.Add((R + G + B) / 3.0f);
+                    result.Add((R + G + B) / 3.0f);
                 }
+            return result.ToArray();
         }
-        private void GetTrack(List<float> imagePixels, ref string imageTrack)
+        private string GetTrack(List<float> imagePixels)
         {
+            string result = "";
             float middleColor = imagePixels.Sum() / imagePixels.Count;
             foreach(float pixselColor in imagePixels)
             {
                 if(pixselColor > middleColor)
                 {
-                    imageTrack += "1";
+                    result += "1";
                 }
                 else
                 {
-                    imageTrack += "0";
+                    result += "0";
                 }
             }
+            return result;
         }
         public string BinaryStringToHexString(string binary)
         {
@@ -131,13 +143,13 @@ namespace Z_57_DLL
             string imageTrack = "";
             ChangeSize(ref image, imgMiniSize);
 
-            GetBlackMode(image, imagePixels);
+            imagePixels.AddRange(GetBlackModePixelsList(image));
 
-            GetTrack(imagePixels, ref imageTrack);
+            imageTrack = GetTrack(imagePixels);
 
             return BinaryStringToHexString(imageTrack);
         }
-        public int returnHammingDistance(string imageOneHEX, string imageTwoHEX)
+        private int returnHammingDistance(string imageOneHEX, string imageTwoHEX)
         {
             int result = 0;
             for (int i = 0; i < imageOneHEX.Length; i++)
