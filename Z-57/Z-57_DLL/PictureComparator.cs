@@ -20,22 +20,7 @@ namespace Z_57_DLL
             this.imgMiniSize = imgMiniSize;
         }
 
-        public string GetImageHEX(string imageName)
-        {
-            return this.GetImageHEX(new Bitmap(imageName));
-        }
-        public string GetImageHEX(Bitmap image)
-        {
-            List<float> imagePixels = new List<float>();
-            string imageTrack = "";
-            changeSize(ref image, imgMiniSize);
-
-            setBlackMode(image, imagePixels);
-
-            setTrack(imagePixels, ref imageTrack);
-
-            return BinaryStringToHexString(imageTrack);
-        }
+       
 
         public int CompareImages(Bitmap imageOne, Bitmap imageTwo)
         {
@@ -51,11 +36,11 @@ namespace Z_57_DLL
             List<float> imageTwoPixels = new List<float>();
             string imageOneTrack = "";
             string imageTwoTrack = "";
-            changeSize(ref imageOne, imgMiniSize);
-            changeSize(ref imageTwo, imgMiniSize);
+            ChangeSize(ref imageOne, imgMiniSize);
+            ChangeSize(ref imageTwo, imgMiniSize);
 
-            setBlackMode(imageOne, imageOnePixels);
-            setBlackMode(imageTwo, imageTwoPixels);
+            GetBlackMode(imageOne, imageOnePixels);
+            GetBlackMode(imageTwo, imageTwoPixels);
 
             setTrack(imageOnePixels, ref imageOneTrack);
             setTrack(imageTwoPixels, ref imageTwoTrack);
@@ -78,11 +63,11 @@ namespace Z_57_DLL
                 return 2;//есть сомнения
             }         
         }
-        public void changeSize(ref Bitmap image1, int imgMiniSize)
+        public void ChangeSize(ref Bitmap image1, int imgMiniSize)
         {
             image1 = new Bitmap(image1, new Size(imgMiniSize, imgMiniSize));
         }
-        public void setBlackMode(Bitmap image, List<float> pixels)
+        public void GetBlackMode(Bitmap image, List<float> pixels)
         {
             for (int j = 0; j < image.Height; j++)
                 for (int i = 0; i < image.Width; i++)
@@ -97,7 +82,7 @@ namespace Z_57_DLL
                     pixels.Add((R + G + B) / 3.0f);
                 }
         }
-        private void setTrack(List<float> imagePixels, ref string imageTrack)
+        private void GetTrack(List<float> imagePixels, ref string imageTrack)
         {
             float middleColor = imagePixels.Sum() / imagePixels.Count;
             foreach(float pixselColor in imagePixels)
@@ -135,6 +120,22 @@ namespace Z_57_DLL
             }
 
             return result.ToString();
+        }
+        public string GetImageHEX(string imageName)
+        {
+            return this.GetImageHEX(new Bitmap(imageName));
+        }
+        public string GetImageHEX(Bitmap image)
+        {
+            List<float> imagePixels = new List<float>();
+            string imageTrack = "";
+            ChangeSize(ref image, imgMiniSize);
+
+            GetBlackMode(image, imagePixels);
+
+            GetTrack(imagePixels, ref imageTrack);
+
+            return BinaryStringToHexString(imageTrack);
         }
         public int returnHammingDistance(string imageOneHEX, string imageTwoHEX)
         {
