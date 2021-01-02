@@ -71,7 +71,7 @@ namespace Z_57_NewForm
                         textBox_ImageOneHEX.Text = "";
                         if (File.Exists(imageName))
                         {
-                            //SetImageInBox(1, imageName);
+                            SetImageInBox(1, imageName);
                             if (checkBoxVisibleHexOfImage.Checked)
                             {
                                 if (imageHex == "")
@@ -92,7 +92,7 @@ namespace Z_57_NewForm
                         textBox_ImageTwoHEX.Text = "";
                         if (File.Exists(imageName))
                         {
-                            //SetImageInBox(2, imageName);
+                            SetImageInBox(2, imageName);
                             if (checkBoxVisibleHexOfImage.Checked)
                             {
                                 if (imageHex == "")
@@ -152,7 +152,7 @@ namespace Z_57_NewForm
         }
         private void RestartData()
         {
-            imageNames.Clear();
+            this.imageNames.Clear();
             this.sumOfSteps = 0;
         }
         private void button_Start_Click(object sender, EventArgs e)

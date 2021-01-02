@@ -19,8 +19,31 @@ namespace Z_57_DLL
             this.hammingDistanceLimitPercent = hammingDistanceLimitPercent;
             this.imgMiniSize = imgMiniSize;
         }
+   
 
-       
+        public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImageList) 
+        { 
+            return FindDuplicateImages(sourceImage, otherImageList, false); 
+        }
+        public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImagesName, bool considerSimilarImages)
+        {
+            //Это функция для поиска дубликатов изображению SourceImage в списке OtherImageList
+            List<string> result = new List<string>();
+
+            for(int i = 0; i < otherImagesName.Length; i++)
+            {
+                int resultofCompare = this.CompareImages(sourceImage, new Bitmap(otherImagesName[i]));
+                if(resultofCompare == 0)
+                {
+                    result.Add(otherImagesName[i]);
+                }
+                else if(resultofCompare == 2 & considerSimilarImages)
+                {
+                    result.Add(otherImagesName[i]);
+                }
+            }
+            return result.ToArray();
+        }
 
         public int CompareImages(Bitmap imageOne, Bitmap imageTwo)
         {
