@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBox_FolderOfImages = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -75,6 +76,7 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -118,10 +120,10 @@
             this.groupBox1.Controls.Add(this.button_Stop);
             this.groupBox1.Controls.Add(this.button_Start);
             this.groupBox1.Controls.Add(this.panel3);
+            this.groupBox1.Controls.Add(this.checkBox1);
+            this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.checkBox2);
             this.groupBox1.Controls.Add(this.panel2);
-            this.groupBox1.Controls.Add(this.panel1);
-            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textBox_FolderOfImages);
@@ -159,7 +161,7 @@
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panel3.Controls.Add(this.checkBox3);
             this.panel3.Controls.Add(this.radioButton6);
-            this.panel3.Location = new System.Drawing.Point(6, 606);
+            this.panel3.Location = new System.Drawing.Point(6, 503);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(325, 75);
             this.panel3.TabIndex = 21;
@@ -170,10 +172,11 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.Location = new System.Drawing.Point(9, 26);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(284, 30);
+            this.checkBox3.Size = new System.Drawing.Size(285, 30);
             this.checkBox3.TabIndex = 6;
-            this.checkBox3.Text = "Вынести изображение-источник при обнаружении \r\nего копий";
+            this.checkBox3.Text = "Вынести исходное изображение при обнаружении \r\nего копий";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // radioButton6
             // 
@@ -190,7 +193,7 @@
             // 
             this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(6, 583);
+            this.checkBox2.Location = new System.Drawing.Point(6, 480);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(335, 17);
             this.checkBox2.TabIndex = 20;
@@ -259,7 +262,7 @@
             this.panel1.Controls.Add(this.radioButton3);
             this.panel1.Controls.Add(this.radioButton4);
             this.panel1.Controls.Add(this.radioButton5);
-            this.panel1.Location = new System.Drawing.Point(6, 504);
+            this.panel1.Location = new System.Drawing.Point(6, 607);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(325, 73);
             this.panel1.TabIndex = 19;
@@ -302,12 +305,13 @@
             // 
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(6, 481);
+            this.checkBox1.Location = new System.Drawing.Point(6, 584);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(321, 17);
             this.checkBox1.TabIndex = 18;
             this.checkBox1.Text = "Автоматизация при обнаружении похожего изображения:";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.Visible = false;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // label4
@@ -337,6 +341,7 @@
             this.panel_progressView.Name = "panel_progressView";
             this.panel_progressView.Size = new System.Drawing.Size(318, 134);
             this.panel_progressView.TabIndex = 24;
+            this.panel_progressView.Visible = false;
             // 
             // label_progress
             // 
@@ -353,9 +358,8 @@
             this.progressBar1.Maximum = 1000;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(312, 23);
-            this.progressBar1.Step = 1;
+            this.progressBar1.Step = 0;
             this.progressBar1.TabIndex = 22;
-            this.progressBar1.Value = 2;
             // 
             // checkedListBox_ImagesClearName
             // 
@@ -584,6 +588,10 @@
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "image (*.jpg; *.png)|*.jpg; *png|All (*.*)|*.*";
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -660,8 +668,9 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBoxVisibleHexOfImage;
         private System.Windows.Forms.Panel panel_buttons;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Panel panel_progressView;
         private System.Windows.Forms.Label label_progress;
+        public System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Timer timer1;
     }
 }

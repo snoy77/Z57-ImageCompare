@@ -11,25 +11,36 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using Z_57_DLL;
+using System.Threading;
 
 namespace Z_57_NewForm
 {
     public partial class Form1 : Form
     {
+        Task task1, task2, task3;
+
         PictureComparator pictureComparator = new PictureComparator();
+        CancellationTokenSource cancellationTokenSource;
+        CancellationToken token;
 
         int sumOfSteps = 0;
+        int stepNow = 0;
         List<string> imageNames = new List<string>();
-
 
         public Form1()
         {
             InitializeComponent();
         }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            textBox_FolderOfImages.Text = Application.StartupPath;
+            folderBrowserDialog1.SelectedPath = Application.StartupPath;
+            openFileDialog1.InitialDirectory = Application.StartupPath;
+        }
 
         private void SetImageInBox(int numberBox, string imageName)
         {
-            if(!checkBox_VisualImage.Checked)
+            if (!checkBox_VisualImage.Checked)
             {
                 return;
             }
@@ -45,16 +56,69 @@ namespace Z_57_NewForm
         }
         private string GetSmallFileName(string fileNameFull)
         {
-            int len =fileNameFull.Length;
+            int len = fileNameFull.Length;
             if (len > 30)
             {
                 return fileNameFull.Substring(0, 15) + "...\\" + Path.GetFileName(fileNameFull);
             }
             else
             {
-                 return fileNameFull;
+                return fileNameFull;
             }
         }
+
+        private void SetInterfaceStartWork()
+        {
+            button_Start.Text = "Start";
+            button_Stop.Visible = false;
+            panel_progressView.Visible = false;
+            checkedListBox_ImagesClearName.Visible = true;
+
+            //Текстовое поле выбора папки – можно изменить
+        }
+
+
+        private void RestartData()
+        {
+            this.imageNames.Clear();
+            this.progressBar1.Value = 0;
+            this.sumOfSteps = 0;
+        }
+        private void SetStartData()
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+            token = cancellationTokenSource.Token;
+            this.sumOfSteps = 0;
+            this.stepNow = 0;
+            imageNames.Clear();
+
+            for (int i = 0; i < checkedListBox_ImagesClearName.CheckedItems.Count; i++)
+            {
+                imageNames.Add(textBox_FolderOfImages.Text + "\\" + checkedListBox_ImagesClearName.CheckedItems[i].ToString());
+            }
+
+            //Подсчёт шагов
+            if (radioButton1.Checked)
+            {
+                this.sumOfSteps = imageNames.Count;
+            }
+            else
+            {
+                for (int i = 1; i < imageNames.Count; i++)
+                {
+                    sumOfSteps += i;
+                }
+            }
+
+            progressBar1.Maximum = this.sumOfSteps;
+            label_progress.Text = progressBar1.Value.ToString() + " \\ " + progressBar1.Maximum.ToString();
+        }
+        private void UpdateProgressView()
+        {
+            stepNow++;
+           
+        }
+
         private void SetImageInfo(int numberBox, string imageName)
         {
             SetImageInfo(numberBox, imageName, "");
@@ -106,7 +170,7 @@ namespace Z_57_NewForm
                     }
                     break;
             }
-            
+
         }
         private void SetImagesNameIntoList(string folderName)
         {
@@ -129,72 +193,98 @@ namespace Z_57_NewForm
             else
                 return false;
         }
-
-        private void Restart()
+        private void StopAllThread()
         {
-
-        }
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            textBox_FolderOfImages.Text = Application.StartupPath;
-            folderBrowserDialog1.SelectedPath = Application.StartupPath;
-            openFileDialog1.InitialDirectory = Application.StartupPath;
+            cancellationTokenSource.Cancel();
+            while ((task1.Status == TaskStatus.Running && task2.Status == TaskStatus.Running && task3.Status == TaskStatus.Running) == false)
+            {
+            }
+            MessageBox.Show("Все потоки остановились");
         }
 
-        private void UpdateprogressView(int step)
+        private void FindNextDublicatForListImage(int taskIndex, CancellationToken token)
         {
-            progressBar1.PerformStep();
-            label_progress.Text = progressBar1.Step.ToString() + " \\ " + progressBar1.Maximum.ToString();
+            
+            while (true)
+            {
+                if (token.IsCancellationRequested) { break; }
+
+                Thread.Sleep(50);
+                UpdateProgressView();
+            }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void FindNextDublicatForSourceImage(int taskIndex, CancellationToken token)
         {
 
+            while (true)
+            {
+                if (token.IsCancellationRequested) { break; }
+                Thread.Sleep(50);
+                UpdateProgressView();
+            }
+        
         }
-        private void RestartData()
-        {
-            this.imageNames.Clear();
-            this.sumOfSteps = 0;
-        }
+
         private void button_Start_Click(object sender, EventArgs e)
         {
-            if (radioButton1.Checked && pictureBox1.Image == null)
+            if (button_Start.Text == "Начать")
             {
-                MessageBox.Show("Выберите сравниваемое изображение");
-                return;
-            }
-            checkedListBox_ImagesClearName.Visible = false;
-            panel_progressView.Visible = true;
-            RestartData();
+                button_Start.Text = "Продолжить";
 
-            //Создание списка имён изображений
-            for (int i = 0; i < checkedListBox_ImagesClearName.CheckedItems.Count; i++)
+                panel_progressView.Visible = true;
+                checkedListBox_ImagesClearName.Visible = false;
+                this.SetStartData();
+
+                timer1.Enabled = true;
+              
+            }
+            else if (button_Start.Text == "Продолжить") 
             {
-                imageNames.Add(textBox_FolderOfImages.Text + "\\" + checkedListBox_ImagesClearName.CheckedItems[i].ToString());
+
             }
 
-            //Подсчёт шагов
-            if (radioButton1.Checked)
+            button_Start.Visible = false;
+            button_Stop.Text = "Остановить";
+            button_Stop.Visible = true;
+
+            if (radioButton2.Checked == true)
             {
-                this.sumOfSteps = imageNames.Count;
+                task1 = Task.Run(() => FindNextDublicatForListImage(0, token));
+                task2 = Task.Run(() => FindNextDublicatForListImage(1, token));
+                task3 = Task.Run(() => FindNextDublicatForListImage(2, token));
             }
-            else
+            else if (radioButton1.Checked == true)
             {
-                for (int i = 1; i < imageNames.Count; i++)
-                {
-                    sumOfSteps += i;
-                }
+
+                task1 = Task.Run(() => FindNextDublicatForSourceImage(0, token));
+                task2 = Task.Run(() => FindNextDublicatForSourceImage(1, token));
+                task3 = Task.Run(() => FindNextDublicatForSourceImage(2, token));
+
             }
-            progressBar1.Maximum = this.sumOfSteps;
-            label_progress.Text = progressBar1.Step.ToString() + " \\ " + progressBar1.Maximum.ToString();
-
-            //подумай про многопоточность
-
         }
         private void button_Stop_Click(object sender, EventArgs e)
         {
-            checkedListBox_ImagesClearName.Visible = true;
-            panel_progressView.Visible = false;
-            RestartData();
+            if (button_Stop.Text == "Остановить")
+            {
+                StopAllThread();
+                cancellationTokenSource = new CancellationTokenSource();
+                token = cancellationTokenSource.Token;
+
+                button_Stop.Text = "Закончить";
+                button_Start.Visible = true;
+            }
+            else if (button_Stop.Text == "Закончить")
+            {
+                button_Start.Text = "Начать";
+                timer1.Enabled = false;
+
+                panel_progressView.Visible = false;
+                checkedListBox_ImagesClearName.Visible = true;
+
+                panel_buttons.Visible = false;
+
+                button_Stop.Visible = false;
+            }
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -242,8 +332,20 @@ namespace Z_57_NewForm
                 panel3.Visible = false;
             }
         }
+        private void checkBoxVisibleHexOfImage_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxVisibleHexOfImage.Checked)
+            {
+                panel_ImagesHEX.Visible = true;
+                SetImageInfo(1, textBox_FolderOfImages.Text + "\\" + textBox_ImageOneName.Text);
+                SetImageInfo(2, textBox_FolderOfImages.Text + "\\" + textBox_ImageTwoName.Text);
+            }
+            else
+            {
+                panel_ImagesHEX.Visible = false;
+            }
+        }
 
-        
         private void textBox_FolderOfImages_TextChanged(object sender, EventArgs e)
         {
             checkedListBox_ImagesClearName.Items.Clear();
@@ -298,6 +400,36 @@ namespace Z_57_NewForm
             SetImageInfo(1, textBox_OriginalImageFileName.Text);
         }
 
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (stepNow > progressBar1.Maximum)
+            {
+               
+                button_Start.Text = "Начать";
+                button_Stop.Text = "Остановить";
+                StopAllThread();
+                checkedListBox_ImagesClearName.Visible = true;
+                panel_progressView.Visible = false;
+                MessageBox.Show("Всё сделало кароче");
+                timer1.Enabled = false;
+            }
+            else
+            {
+                progressBar1.Value = stepNow;
+                label_progress.Text = progressBar1.Value.ToString() + " \\ " + progressBar1.Maximum.ToString();
+            }
+        }
+
         private void checkBox_VisualImage_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox_VisualImage.Checked == true)
@@ -323,20 +455,6 @@ namespace Z_57_NewForm
             if (radioButton1.Checked == true)
             {
                 ShowFileDialog();
-            }
-        }
-
-        private void checkBoxVisibleHexOfImage_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBoxVisibleHexOfImage.Checked)
-            {
-                panel_ImagesHEX.Visible = true;
-                SetImageInfo(1, textBox_FolderOfImages.Text + "\\" + textBox_ImageOneName.Text);
-                SetImageInfo(2, textBox_FolderOfImages.Text + "\\" + textBox_ImageTwoName.Text);
-            }
-            else
-            {
-                panel_ImagesHEX.Visible = false;
             }
         }
     }
