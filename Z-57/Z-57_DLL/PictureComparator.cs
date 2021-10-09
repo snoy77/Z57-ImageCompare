@@ -8,6 +8,13 @@ using System.Drawing;
 
 namespace Z_57_DLL
 {
+    public enum CompareResult 
+    {
+        TheSame = 0,
+        Simular = 1,
+        Various = 2
+    }
+
     public class PictureComparator
     {
         public double hammingDistanceLimitPercent;
@@ -21,39 +28,39 @@ namespace Z_57_DLL
         }
    
 
-        public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImageList) 
-        { 
-            return FindDuplicateImages(sourceImage, otherImageList, false); 
-        }
-        public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImagesName, bool considerSimilarImages)
-        {
-            //Это функция для поиска дубликатов изображению SourceImage в списке OtherImageList
-            List<string> result = new List<string>();
+        //public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImageList) 
+        //{ 
+        //    return FindDuplicateImages(sourceImage, otherImageList, false); 
+        //}
+        //public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImagesName, bool considerSimilarImages)
+        //{
+        //    //Это функция для поиска дубликатов изображению SourceImage в списке OtherImageList
+        //    List<string> result = new List<string>();
 
-            for(int i = 0; i < otherImagesName.Length; i++)
-            {
-                int resultofCompare = this.CompareImages(sourceImage, new Bitmap(otherImagesName[i]));
-                if(resultofCompare == 0)
-                {
-                    result.Add(otherImagesName[i]);
-                }
-                else if(resultofCompare == 2 & considerSimilarImages)
-                {
-                    result.Add(otherImagesName[i]);
-                }
-            }
-            return result.ToArray();
-        }
+        //    for(int i = 0; i < otherImagesName.Length; i++)
+        //    {
+        //        int resultofCompare = this.CompareImages(sourceImage, new Bitmap(otherImagesName[i]));
+        //        if(resultofCompare == 0)
+        //        {
+        //            result.Add(otherImagesName[i]);
+        //        }
+        //        else if(resultofCompare == 2 & considerSimilarImages)
+        //        {
+        //            result.Add(otherImagesName[i]);
+        //        }
+        //    }
+        //    return result.ToArray();
+        //}
 
-        public int CompareImages(Bitmap imageOne, Bitmap imageTwo)
+        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo)
         {
             return CompareImages(imageOne, imageTwo, this.imgMiniSize, this.hammingDistanceLimitPercent);
         }
-        public int CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize)
+        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize)
         {
             return CompareImages(imageOne, imageTwo, imgMiniSize, this.hammingDistanceLimitPercent);
         }
-        public int CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize, double hammingDistanceLimitPercent)
+        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize, double hammingDistanceLimitPercent)
         {
             List<float> imageOnePixels = new List<float>();//значения цветов пикселей первой картинки
             List<float> imageTwoPixels = new List<float>();
@@ -82,15 +89,15 @@ namespace Z_57_DLL
             //Возвращаем результат сравнения
             if (HammingDistance == 0)//одинаковые
             {
-                return 0;
+                return CompareResult.TheSame;
             }
             else if(HammingDistance > this.hammingDistanceLimitPercent*imageOneHEX.Length)//разные
             {
-                return 1;
+                return CompareResult.Various;
             }
             else
             {
-                return 2;//есть сомнения
+                return CompareResult.Simular;
             }         
         }
      
