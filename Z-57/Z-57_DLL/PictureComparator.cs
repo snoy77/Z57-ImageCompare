@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Drawing;
 
-namespace Z_57_DLL
+namespace Z57_ImageComporator
 {
     public enum CompareResult 
     {
@@ -17,26 +17,26 @@ namespace Z_57_DLL
 
     public class PictureComparator
     {
-        public double hammingDistanceLimitPercent;
-        public int imgMiniSize;
+        public double HammingDistanceLimitPercent;
+        public int ImgMiniSize;
 
-        public PictureComparator() : this(0.05, 35) { }
+        public PictureComparator() : this(10, 35) { }
         public PictureComparator(double hammingDistanceLimitPercent, int imgMiniSize)
         {
-            this.hammingDistanceLimitPercent = hammingDistanceLimitPercent;
-            this.imgMiniSize = imgMiniSize;
+            this.HammingDistanceLimitPercent = hammingDistanceLimitPercent;
+            this.ImgMiniSize = imgMiniSize;
         }
         public CompareResult CompareTwoImage(string imageOneFileName, string imageTwoFileName)
         {
-            return this.CompareTwoImage(new Bitmap(imageOneFileName), new Bitmap(imageTwoFileName), this.imgMiniSize, this.hammingDistanceLimitPercent);
+            return this.CompareTwoImage(new Bitmap(imageOneFileName), new Bitmap(imageTwoFileName), this.ImgMiniSize, this.HammingDistanceLimitPercent);
         }
         public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo)
         {
-            return CompareTwoImage(imageOne, imageTwo, this.imgMiniSize, this.hammingDistanceLimitPercent);
+            return CompareTwoImage(imageOne, imageTwo, this.ImgMiniSize, this.HammingDistanceLimitPercent);
         }
         public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize)
         {
-            return CompareTwoImage(imageOne, imageTwo, imgMiniSize, this.hammingDistanceLimitPercent);
+            return CompareTwoImage(imageOne, imageTwo, imgMiniSize, this.HammingDistanceLimitPercent);
         }
         public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize, double hammingDistanceLimitPercent)
         {
@@ -62,7 +62,9 @@ namespace Z_57_DLL
 
             //Вычисляем расстояние Хэмминга
             int hammingDistanceResult = GetHammingDistance(imageOneHEX, imageTwoHEX);
-            double hamingDistanceResultPersent= (imageOneHEX.Length / 100) * hammingDistanceResult;
+            double hamingDistanceResultPersent = (double)hammingDistanceResult/((double)imageOneHEX.Length / 100);
+            imageOne.Dispose();
+            imageTwo.Dispose();
             Console.WriteLine($"Длина хекс представления: {imageOneHEX.Length} | Дист. Хаминга: {hammingDistanceResult.ToString()} | res: {hamingDistanceResultPersent}%");
            
             //Возвращаем результат сравнения
@@ -70,7 +72,7 @@ namespace Z_57_DLL
             {
                 return CompareResult.TheSame;
             }
-            else if(hamingDistanceResultPersent > this.hammingDistanceLimitPercent)//разные
+            else if(hamingDistanceResultPersent > hammingDistanceLimitPercent)//разные
             {
                 return CompareResult.Various;
             }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z-57_form", "Z-57_form\Z-57_form.csproj", "{E588EB9B-6098-40D8-9D72-8CBAD7A77358}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z-57_TestForm", "Z-57_form\Z-57_TestForm.csproj", "{E588EB9B-6098-40D8-9D72-8CBAD7A77358}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Z-57_DLL", "Z-57_DLL\Z-57_DLL.csproj", "{BC9B6EA2-71E3-4864-AF42-9B554FDB7C47}"
 EndProject

@@ -79,5 +79,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Z-57_DLL\Z-57_DLL.csproj">
+      <Project>{bc9b6ea2-71e3-4864-af42-9b554fdb7c47}</Project>
+      <Name>Z-57_DLL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

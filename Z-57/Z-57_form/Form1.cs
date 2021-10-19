@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Z57_ImageComporator;
+
 namespace Z_57_form
 {
     
@@ -177,6 +179,17 @@ namespace Z_57_form
         private void button7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            PictureComparator pic = new PictureComparator();
+            MessageBox.Show(
+                pic.CompareTwoImage(
+                    new Bitmap(textBox1.Text), 
+                    new Bitmap(textBox2.Text), 
+                    int.Parse(textBox6.Text), 
+                    double.Parse(textBox5.Text)).ToString());
         }
     }
     public class ZZ
