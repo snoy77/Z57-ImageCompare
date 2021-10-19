@@ -26,56 +26,33 @@ namespace Z_57_DLL
             this.hammingDistanceLimitPercent = hammingDistanceLimitPercent;
             this.imgMiniSize = imgMiniSize;
         }
-   
-
-        //public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImageList) 
-        //{ 
-        //    return FindDuplicateImages(sourceImage, otherImageList, false); 
-        //}
-        //public string[] FindDuplicateImages(Bitmap sourceImage, string[] otherImagesName, bool considerSimilarImages)
-        //{
-        //    //Это функция для поиска дубликатов изображению SourceImage в списке OtherImageList
-        //    List<string> result = new List<string>();
-
-        //    for(int i = 0; i < otherImagesName.Length; i++)
-        //    {
-        //        int resultofCompare = this.CompareImages(sourceImage, new Bitmap(otherImagesName[i]));
-        //        if(resultofCompare == 0)
-        //        {
-        //            result.Add(otherImagesName[i]);
-        //        }
-        //        else if(resultofCompare == 2 & considerSimilarImages)
-        //        {
-        //            result.Add(otherImagesName[i]);
-        //        }
-        //    }
-        //    return result.ToArray();
-        //}
-
-        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo)
+        public CompareResult CompareTwoImage(string imageOneFileName, string imageTwoFileName)
         {
-            return CompareImages(imageOne, imageTwo, this.imgMiniSize, this.hammingDistanceLimitPercent);
+            return this.CompareTwoImage(new Bitmap(imageOneFileName), new Bitmap(imageTwoFileName), this.imgMiniSize, this.hammingDistanceLimitPercent);
         }
-        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize)
+        public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo)
         {
-            return CompareImages(imageOne, imageTwo, imgMiniSize, this.hammingDistanceLimitPercent);
+            return CompareTwoImage(imageOne, imageTwo, this.imgMiniSize, this.hammingDistanceLimitPercent);
         }
-        public CompareResult CompareImages(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize, double hammingDistanceLimitPercent)
+        public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize)
         {
+            return CompareTwoImage(imageOne, imageTwo, imgMiniSize, this.hammingDistanceLimitPercent);
+        }
+        public CompareResult CompareTwoImage(Bitmap imageOne, Bitmap imageTwo, int imgMiniSize, double hammingDistanceLimitPercent)
+        {
+            //Изменяем размеры картинок
+            imageOne = new Bitmap(imageOne, new Size(imgMiniSize, imgMiniSize));
+            imageTwo = new Bitmap(imageTwo, new Size(imgMiniSize, imgMiniSize));
+
+            //Получаем список значений пикселей, у каждого из которых среднее значение RGB
             List<float> imageOnePixels = new List<float>();//значения цветов пикселей первой картинки
             List<float> imageTwoPixels = new List<float>();
-            string imageOneTrack = "";//биты структуры изображений
-            string imageTwoTrack = "";
-
-            //Изменяем размеры картинок
-            ChangeSize(ref imageOne, imgMiniSize);
-            ChangeSize(ref imageTwo, imgMiniSize);
-
-            //Получаем список пикселей, у каждого из которых среднее значение RGB
-            imageOnePixels.AddRange(GetBlackModePixelsList(imageOne));
-            imageTwoPixels.AddRange(GetBlackModePixelsList(imageTwo));
+            imageOnePixels.AddRange(GetTheAverageValueOfPixels(imageOne));
+            imageTwoPixels.AddRange(GetTheAverageValueOfPixels(imageTwo));
 
             //Получаем список битов -структуру(след)
+            string imageOneTrack = "";//биты структуры изображений
+            string imageTwoTrack = "";
             imageOneTrack = GetTrack(imageOnePixels);
             imageTwoTrack = GetTrack(imageTwoPixels);
 
@@ -84,14 +61,16 @@ namespace Z_57_DLL
             string imageTwoHEX = BinaryStringToHexString(imageTwoTrack);
 
             //Вычисляем расстояние Хэмминга
-            int HammingDistance = returnHammingDistance(imageOneHEX, imageTwoHEX);
-
+            int hammingDistanceResult = GetHammingDistance(imageOneHEX, imageTwoHEX);
+            double hamingDistanceResultPersent= (imageOneHEX.Length / 100) * hammingDistanceResult;
+            Console.WriteLine($"Длина хекс представления: {imageOneHEX.Length} | Дист. Хаминга: {hammingDistanceResult.ToString()} | res: {hamingDistanceResultPersent}%");
+           
             //Возвращаем результат сравнения
-            if (HammingDistance == 0)//одинаковые
+            if (hammingDistanceResult == 0)//одинаковые
             {
                 return CompareResult.TheSame;
             }
-            else if(HammingDistance > this.hammingDistanceLimitPercent*imageOneHEX.Length)//разные
+            else if(hamingDistanceResultPersent > this.hammingDistanceLimitPercent)//разные
             {
                 return CompareResult.Various;
             }
@@ -100,12 +79,7 @@ namespace Z_57_DLL
                 return CompareResult.Simular;
             }         
         }
-     
-        private void ChangeSize(ref Bitmap image1, int imgMiniSize)
-        {
-            image1 = new Bitmap(image1, new Size(imgMiniSize, imgMiniSize));
-        }
-        private float[] GetBlackModePixelsList(Bitmap image)
+        private float[] GetTheAverageValueOfPixels(Bitmap image)
         {
             List<float> result = new List<float>();//Список пикселей со средним RGB
             for (int j = 0; j < image.Height; j++)
@@ -163,23 +137,7 @@ namespace Z_57_DLL
 
             return result.ToString();
         }
-        public string GetImageHEX(string imageName)
-        {
-            return this.GetImageHEX(new Bitmap(imageName));
-        }
-        public string GetImageHEX(Bitmap image)
-        {
-            List<float> imagePixels = new List<float>();
-            string imageTrack = "";
-            ChangeSize(ref image, imgMiniSize);
-
-            imagePixels.AddRange(GetBlackModePixelsList(image));
-
-            imageTrack = GetTrack(imagePixels);
-
-            return BinaryStringToHexString(imageTrack);
-        }
-        private int returnHammingDistance(string imageOneHEX, string imageTwoHEX)
+        private int GetHammingDistance(string imageOneHEX, string imageTwoHEX)
         {
             int result = 0;
             for (int i = 0; i < imageOneHEX.Length; i++)
@@ -190,9 +148,7 @@ namespace Z_57_DLL
                 }
             }
             return result;
-
         }
-
     }
 }
     
