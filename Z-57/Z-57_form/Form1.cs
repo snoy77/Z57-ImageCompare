@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Z_57_form
 {
@@ -29,7 +30,7 @@ namespace Z_57_form
         public Form1()
         {
             InitializeComponent();
-            newSize = 32;
+            newSize = 100;
             pupu = 0.05;
             sled1 = new List<float>();
             sled2 = new List<float>();
@@ -37,6 +38,18 @@ namespace Z_57_form
 
         private void button1_Click(object sender, EventArgs e)
         {
+            FileInfo a = new FileInfo(textBox1.Text);
+            if(a.Length > 1000000)
+            {
+                label9.Text = "Изображение не должно весить больше 1.000.000 байт";
+                return;
+            }
+            a = new FileInfo(textBox2.Text);
+            if (a.Length > 1000000)
+            {
+                label9.Text = "Изображение не должно весить больше 1.000.000 байт";
+                return;
+            }
             bitmap1 = new Bitmap(Image.FromFile(textBox1.Text));
             bitmap2 = new Bitmap(Image.FromFile(textBox2.Text));
             pictureBox1.Image = bitmap1;
@@ -45,6 +58,10 @@ namespace Z_57_form
             sled2.Clear();
             byteList3 = "";
             byteList4 = "";
+
+            this.button4.Enabled = false;
+            this.button5.Enabled = false;
+            this.button6.Enabled = false;
         }
         private void button2_Click(object sender, EventArgs e)
         {
@@ -52,6 +69,8 @@ namespace Z_57_form
             bitmap2 = new Bitmap(bitmap2, new Size(newSize, newSize));
             pictureBox1.Image = bitmap1;
             pictureBox2.Image = bitmap2;
+
+            
         }
         private void setBlackMode(Bitmap bitmap, List<float> sled)
         {
@@ -112,6 +131,8 @@ namespace Z_57_form
             setBlackMode(bitmap2, sled2);
             pictureBox1.Image = bitmap1;
             pictureBox2.Image = bitmap2;
+
+            this.button4.Enabled= true;
         }
         private void button4_Click(object sender, EventArgs e)
         {
@@ -119,6 +140,8 @@ namespace Z_57_form
             setSled(bitmap2, sled2, ref byteList4);
             pictureBox1.Image = bitmap1;
             pictureBox2.Image = bitmap2;
+
+            this.button5.Enabled = true;
         }
         public static string BinaryStringToHexString(string binary)
         {
@@ -148,6 +171,8 @@ namespace Z_57_form
         {
             label6.Text = BinaryStringToHexString(byteList3);/*BitConverter.ToUInt64(byteList1.ToArray(), 0).ToString();*/
             label8.Text = BinaryStringToHexString(byteList4);/*BitConverter.ToUInt64(byteList2.ToArray(), 0).ToString();*/
+
+            this.button6.Enabled = true;
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -177,6 +202,13 @@ namespace Z_57_form
         private void button7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.button4.Enabled = false;
+            this.button5.Enabled = false;
+            this.button6.Enabled = false;
         }
     }
     public class ZZ
